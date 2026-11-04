@@ -1,6 +1,6 @@
 {
   "format": 2,
-  "version": "0.1.2",
+  "version": "0.2.0",
   "author": "mo",
   "license": "GPL-3.0-or-later",
   "api": "1.9",
@@ -12,5 +12,5 @@
   },
   "id": "fast-travel",
   "name": "Fast Travel",
-  "description": "Controller-driven fast travel between planets already visited during the current session, using OpenRAC's official play-travel API."
+  "description": "Native RAC1-style fast-travel page for planets visited during the current session."
 }
