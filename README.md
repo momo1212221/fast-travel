@@ -1,11 +1,15 @@
 # Fast Travel
 
-Fast travel without unlocking unseen content.
+Native RAC1 fast travel to planets the player has already unlocked.
 
-Only planets visited during the current session are offered:
-- L2 + R2 + Left/Right: select a visited planet
-- L2 + R2 + Cross: travel
+- Open from the mod's native RAC1 UI.
+- Works directly while the game is paused.
+- Lists unlocked planets, not arbitrary hidden destinations.
+- Uses OpenRAC's official play-travel API.
+- Does not unlock new planets or alter progression.
 
-This keeps the first release non-cheating and avoids private save-format parsing.
+Fast Travel is also integrated into Better Pause Menu / QoL Hub, but remains available as a standalone package.
+
+No game assets or disc files are included.
 
 Built for OpenRAC RAC1 PAL/NTSC-U. AI-assisted implementation. GPL-3.0-or-later.
