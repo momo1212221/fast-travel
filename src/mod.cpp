@@ -11,7 +11,13 @@ std::vector<int> visited;
 std::size_t selected=0;
 std::uint16_t previous=0;
 int action=0;
-void say(){ if(!visited.empty() && g->has_notice()) g->play_notice("Fast travel: "+g->level_name(visited[selected])); }
+int notice_frames=0;
+void say(){
+    if(!visited.empty() && g->has_notice()){
+        g->play_notice("Fast travel: "+g->level_name(visited[selected]));
+        notice_frames=120;
+    }
+}
 }
 void load(openrac::Mod& mod){
     if(mod.game()!="rac1" || !mod.has_play()) throw openrac::Error("Fast Travel requires RAC1 play API");
@@ -35,7 +41,8 @@ void load(openrac::Mod& mod){
         if(s.level>=0 && std::find(visited.begin(),visited.end(),s.level)==visited.end()){ visited.push_back(s.level); selected=visited.size()-1; }
         if(action==-1 || action==1){ selected=qol::step(selected,visited.size(),action); action=0; say(); }
         else if(action==2){ action=0; if(!visited.empty() && s.phase==OPENRAC_PLAY_PLAYING){ if(visited[selected]==s.level) say(); else g->play_travel(visited[selected]); } }
+        if(notice_frames>0 && --notice_frames==0 && g->has_notice()) g->play_notice("");
     });
     mod.info("L2+R2+Left/Right selects; L2+R2+Cross travels");
 }
-OPENRAC_MOD_CPP("fast-travel","0.1.1",load)
+OPENRAC_MOD_CPP("fast-travel","0.1.2",load)
