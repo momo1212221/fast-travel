@@ -1,6 +1,6 @@
 {
   "format": 2,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "mo",
   "license": "GPL-3.0-or-later",
   "api": "1.9",
@@ -12,5 +12,5 @@
   },
   "id": "fast-travel",
   "name": "Fast Travel",
-  "description": "Native RAC1-style fast-travel page for planets visited during the current session."
+  "description": "Native RAC1 fast travel to all unlocked planets, including directly from the pause menu."
 }

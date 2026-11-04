@@ -11,6 +11,25 @@ std::vector<int> visited;
 std::uint16_t previous=0;
 bool open_requested=false;
 int pending_level=-1;
+
+bool travel_allowed(const openrac_play_status& s){
+    return s.level>=0 && (s.phase==OPENRAC_PLAY_PLAYING
+        || s.phase==OPENRAC_PLAY_SCENE || s.phase==OPENRAC_PLAY_MENU);
+}
+
+void refresh_unlocked(){
+    const auto base=g->relocate(0x0013DE48u);
+    const auto status=g->play_status();
+    for(int level=1; level<=18; ++level){
+        const bool unlocked=g->memory().read<std::uint8_t>(
+            base+static_cast<openrac::gaddr>(level)
+        )!=0;
+        if((unlocked || level==status.level)
+           && std::find(visited.begin(),visited.end(),level)==visited.end())
+            visited.push_back(level);
+    }
+    std::sort(visited.begin(),visited.end());
+}
 }
 
 void load(openrac::Mod& mod){
@@ -19,6 +38,7 @@ void load(openrac::Mod& mod){
 
     page=mod.ui_page([&mod](const openrac::UiPage& p,const openrac::UiEvent& event){
         const auto status=mod.play_status();
+        refresh_unlocked();
         openrac::UiContent c;
         c.title="Fast Travel";
         if(visited.empty()){
@@ -27,7 +47,7 @@ void load(openrac::Mod& mod){
             for(int level:visited){
                 c.items.push_back(openrac::UiItem::button(
                     mod.level_name(level)+(level==status.level ? " (current)" : ""),
-                    level!=status.level
+                    level!=status.level && travel_allowed(status)
                 ));
             }
         }
@@ -36,7 +56,8 @@ void load(openrac::Mod& mod){
 
         if(event.is(OPENRAC_UI_CHOOSE)){
             const int index=event.item();
-            if(index>=0 && index<static_cast<int>(visited.size()) && visited[index]!=status.level){
+            if(index>=0 && index<static_cast<int>(visited.size())
+               && visited[index]!=status.level && travel_allowed(status)){
                 pending_level=visited[index];
                 p.back();
             }
@@ -54,18 +75,18 @@ void load(openrac::Mod& mod){
 
     mod.on_frame([]{
         const auto status=g->play_status();
-        if(status.level>=0 && std::find(visited.begin(),visited.end(),status.level)==visited.end())
-            visited.push_back(status.level);
+        refresh_unlocked();
 
         if(open_requested){
             open_requested=false;
             page.open();
         }
-        if(pending_level>=0 && status.phase==OPENRAC_PLAY_PLAYING){
+        if(pending_level>=0 && travel_allowed(status)){
             const int level=pending_level;
             pending_level=-1;
-            g->play_travel(level);
+            const int result=g->play_travel(level);
+            if(result!=OPENRAC_HOOK_OK && result!=OPENRAC_HOOK_TAKEN) pending_level=level;
         }
     });
 }
-OPENRAC_MOD_CPP("fast-travel","0.2.0",load)
+OPENRAC_MOD_CPP("fast-travel","0.3.0",load)
