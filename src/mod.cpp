@@ -25,6 +25,9 @@ void load(openrac::Mod& mod){
         if(qol::combo_pressed(now,previous,left)) action=-1;
         if(qol::combo_pressed(now,previous,right)) action=1;
         if(qol::combo_pressed(now,previous,go)) action=2;
+        if((now&left)==left) qol::consume_buttons(report,left);
+        if((now&right)==right) qol::consume_buttons(report,right);
+        if((now&go)==go) qol::consume_buttons(report,go);
         previous=now;
     });
     mod.on_frame([]{
@@ -35,4 +38,4 @@ void load(openrac::Mod& mod){
     });
     mod.info("L2+R2+Left/Right selects; L2+R2+Cross travels");
 }
-OPENRAC_MOD_CPP("fast-travel","0.1.0",load)
+OPENRAC_MOD_CPP("fast-travel","0.1.1",load)
